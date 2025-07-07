@@ -17,7 +17,9 @@
 		let newFilteredDates: Date[] = [];
 
 		newFilteredDates = spatialPredictions.filter((v) => v.lake == lake.id).map((v) => v.date) || [];
-		newFilteredDates = [...new Set(newFilteredDates)]; // makes unique
+		newFilteredDates = [...new Set(newFilteredDates.map((r) => r.getTime()))].map(
+			(r: number) => new Date(r)
+		);
 		newFilteredDates.sort(); // mutates
 		$simpleRasterDates_filtered = newFilteredDates;
 		$selectedDateIndex = -1; // do this to register a change

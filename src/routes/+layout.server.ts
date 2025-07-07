@@ -10,7 +10,7 @@ export const load: LayoutServerLoad = async ({ params }) => {
     }
 
     // make dates unique
-    simpleRasterDates = Array.from(new Set(simpleRasterDates));
+    simpleRasterDates = [...new Set(simpleRasterDates.map(r => r.getTime()))].map((r: number) => (new Date(r)));
     simpleRasterDates.sort();
     return {
         lakes,

@@ -6,12 +6,16 @@
 		if ($selectedDateIndex < $simpleRasterDates_filtered.length - 1) {
 			$selectedDateIndex = $selectedDateIndex + 1;
 		}
+
+		console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
 	}
 
 	function prevDate() {
 		if ($selectedDateIndex > 0) {
 			$selectedDateIndex = $selectedDateIndex - 1;
 		}
+
+		console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
 	}
 </script>
 
