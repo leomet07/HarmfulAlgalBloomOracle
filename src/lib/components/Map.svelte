@@ -166,7 +166,7 @@
 	});
 </script>
 
-<div class="map" bind:this={mapElement} />
+<div class="map" bind:this={mapElement}></div>
 
 <style>
 	.map {

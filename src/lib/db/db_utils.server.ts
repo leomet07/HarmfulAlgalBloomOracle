@@ -9,6 +9,5 @@ export async function getLakes() {
 
 export async function getSpatialPredictionMaps() {
     const spatial_prediction_maps = await getDB().collection("spatial_predictions").find<SpatialPredictionExported>({}).toArray();
-    // const spatial_prediction_maps = await pb.collection('spatialPredictionMaps').getFullList<SpatialPredictionExported>({ batch: 100000, requestKey: null });
-    return []
+    return spatial_prediction_maps;
 }
