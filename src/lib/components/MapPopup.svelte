@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LakeExported, TimeSeriesExported, SpatialPredictionExported } from '$lib/types';
-	import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+	// import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
 	import { simpleRasterDates_filtered, selectedDateIndex } from '$lib/store';
 
 	export let lake: LakeExported;
@@ -9,15 +9,14 @@
 
 	let timeSeriesURL =
 		lake?.expand?.timeSeriesItem &&
-		`${PUBLIC_POCKETBASE_URL}/api/files/${lake.expand.timeSeriesItem.collectionId}/${lake.expand.timeSeriesItem.id}/${lake.expand.timeSeriesItem.graph}`;
+		`/api/files/${lake.expand.timeSeriesItem.collectionId}/${lake.expand.timeSeriesItem.id}/${lake.expand.timeSeriesItem.graph}`;
 
 	// Date.toLocaleDateString('en-CA') outputs date in YYYY-MM-DD without swithcing timezone, exactly what is needed here
 	async function setTimeline() {
 		// clear all overlays
-		let newFilteredDates: string[] = [];
+		let newFilteredDates: Date[] = [];
 
-		newFilteredDates =
-			spatialPredictions.filter((v) => v.lake == lake.id).map((v) => v.date.slice(0, 10)) || [];
+		newFilteredDates = spatialPredictions.filter((v) => v.lake == lake.id).map((v) => v.date) || [];
 		newFilteredDates = [...new Set(newFilteredDates)]; // makes unique
 		newFilteredDates.sort(); // mutates
 		$simpleRasterDates_filtered = newFilteredDates;

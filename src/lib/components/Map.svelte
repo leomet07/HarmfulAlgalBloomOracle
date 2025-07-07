@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount, mount, unmount } from 'svelte';
 	import type { CircleMarker, ImageOverlay, LatLngBounds, LatLngTuple, Map, Marker } from 'leaflet';
 	import { browser } from '$app/environment';
 	import type { Lake, LakeExported, SpatialPredictionExported } from '$lib/types';
 	import 'leaflet/dist/leaflet.css';
 	import { mapCoords, selectedDateIndex } from '$lib/store';
 	import MapPopup from './MapPopup.svelte';
+
 	// import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
 	import { simpleRasterDates_filtered } from '$lib/store';
 
@@ -66,7 +67,7 @@
 						popupComponent = null;
 						// Wait to destroy until after the fadeout completes.
 						setTimeout(() => {
-							old.$destroy();
+							unmount(old);
 						}, 500);
 					}
 				});
@@ -101,8 +102,9 @@
 						console.log('Marker clicked: ', lake);
 					});
 
+				//@ts-ignore
 				bindPopup(marker, (container) => {
-					let c = new MapPopup({
+					let c = mount(MapPopup, {
 						target: container,
 						props: {
 							lake: lake,
@@ -124,9 +126,12 @@
 				}
 				clearImageOverlays();
 				for (const spatialPrediction of spatialPredictions) {
-					let spatialPredictionYYYYMMDD = spatialPrediction.date.slice(0, 10);
+					let spatialPredictionYYYYMMDD = spatialPrediction.date;
 
-					if (spatialPredictionYYYYMMDD == $simpleRasterDates_filtered[changedDateIndex]) {
+					if (
+						spatialPredictionYYYYMMDD.getTime() ==
+						$simpleRasterDates_filtered[changedDateIndex].getTime()
+					) {
 						// if date passes the filter
 						const image_url = `/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.display_image}`;
 						const raster_url = `/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.raster_image}`;

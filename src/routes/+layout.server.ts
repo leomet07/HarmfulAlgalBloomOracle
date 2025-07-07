@@ -4,9 +4,9 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ params }) => {
     const [lakes, spatialPredictions] = await Promise.all([getLakes(), getSpatialPredictionMaps()]);
 
-    let simpleRasterDates: string[] = []
+    let simpleRasterDates: Date[] = []
     for (const spatialPredictionMap of spatialPredictions) {
-        simpleRasterDates.push(spatialPredictionMap.date.slice(0, 10)); 
+        simpleRasterDates.push(spatialPredictionMap.date);
     }
 
     // make dates unique

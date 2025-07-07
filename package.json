@@ -32,6 +32,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"date-fns": "^4.1.0",
 		"leaflet": "^1.9.4",
 		"mongodb": "^6.17.0"
 	}
