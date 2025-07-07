@@ -167,6 +167,21 @@
 					}
 				})
 				.addTo(map);
+
+			map.on('moveend', async function () {
+				let bounds = map.getBounds();
+				const response = await fetch('/boundsUpdated', {
+					method: 'POST',
+					body: JSON.stringify({ BBoxString: bounds.toBBoxString() }),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+				let rjson = await response.json();
+				let spatialPredictions = rjson.spatialPredictions as unknown as SpatialPredictionExported[];
+				console.log(spatialPredictions.filter((v) => v.lagoslakeid == 81353));
+				console.log('rjson: ', rjson);
+			});
 		}
 	});
 </script>

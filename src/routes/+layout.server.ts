@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = async ({ params }) => {
     simpleRasterDates.sort();
     return {
         lakes,
-        spatialPredictions,
+        spatialPredictions: [],
         simpleRasterDates
     }
 };
