@@ -6,7 +6,7 @@
 	import 'leaflet/dist/leaflet.css';
 	import { mapCoords, selectedDateIndex } from '$lib/store';
 	import MapPopup from './MapPopup.svelte';
-	import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+	// import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
 	import { simpleRasterDates_filtered } from '$lib/store';
 
 	export let lakes: LakeExported[];
@@ -128,8 +128,8 @@
 
 					if (spatialPredictionYYYYMMDD == $simpleRasterDates_filtered[changedDateIndex]) {
 						// if date passes the filter
-						const image_url = `${PUBLIC_POCKETBASE_URL}/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.display_image}`;
-						const raster_url = `${PUBLIC_POCKETBASE_URL}/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.raster_image}`;
+						const image_url = `/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.display_image}`;
+						const raster_url = `/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.raster_image}`;
 						lakesToRasterByCurrentDate[spatialPrediction.lagoslakeid] = raster_url;
 						const corresponding_lake = lakes.find((v) => v.id == spatialPrediction.lake); // hacky solution to find lakename
 						if (corresponding_lake) {

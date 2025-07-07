@@ -28,9 +28,10 @@ type SpatialPrediction = {
     corner1longitude: number;
     corner2latitude: number;
     corner2longitude: number;
-    session_uuid : string;
+    session_uuid: string;
     lagoslakeid: number;
     lake: string;
+    satellite: string;
 }
 
 export type SpatialPredictionExported = SpatialPrediction & StrictRecordModel;
