@@ -66,7 +66,8 @@
 					.imageOverlay(imageUrl, latLngBounds, {
 						opacity: 0.8,
 						alt: altText,
-						interactive: true
+						interactive: true,
+						className: 'prediction-overlay-img'
 					})
 					.addTo(map);
 				imageOverlay.on('click', () => {
@@ -85,7 +86,9 @@
 					// if date passes the filter
 					const image_url = `${PUBLIC_PNG_SERVER_PATH}/png_out_${spatialPrediction.session_uuid}/${spatialPrediction.display_image}`;
 
-					const corresponding_lake = lakes.find((v) => v.id == spatialPrediction.lake); // hacky solution to find lakename
+					const corresponding_lake = lakes.find(
+						(v) => v.lagoslakeid == spatialPrediction.lagoslakeid
+					); // hacky solution to find lakename
 					if (corresponding_lake) {
 						add_lake_overlay_to_map(
 							image_url,
@@ -205,5 +208,12 @@
 	.map {
 		height: 73vh;
 		margin-bottom: 1rem;
+	}
+
+	:global(.prediction-overlay-img) {
+		/* Style image alt text */
+		color: black !important;
+		font-size: 1.5rem;
+		font-weight: bold;
 	}
 </style>
