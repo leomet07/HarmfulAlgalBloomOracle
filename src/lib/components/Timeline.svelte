@@ -1,36 +1,32 @@
 <script lang="ts">
-	import { selectedDateIndex } from '$lib/store';
-	import { simpleRasterDates_filtered } from '$lib/store';
+	import { selectedDateYYYYMMDD } from '$lib/store';
+
+	// import { selectedDateIndex } from '$lib/store';
+	// import { simpleRasterDates_filtered } from '$lib/store';
 
 	function nextDate() {
-		if ($selectedDateIndex < $simpleRasterDates_filtered.length - 1) {
-			$selectedDateIndex = $selectedDateIndex + 1;
-		}
-
-		console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
+		// if ($selectedDateIndex < $simpleRasterDates_filtered.length - 1) {
+		// 	$selectedDateIndex = $selectedDateIndex + 1;
+		// }
+		// console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
 	}
 
 	function prevDate() {
-		if ($selectedDateIndex > 0) {
-			$selectedDateIndex = $selectedDateIndex - 1;
-		}
-
-		console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
+		// if ($selectedDateIndex > 0) {
+		// 	$selectedDateIndex = $selectedDateIndex - 1;
+		// }
+		// console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
 	}
 </script>
 
 <div class="timeline_container">
-	<button class="left" on:click={prevDate} disabled={$selectedDateIndex == 0}>
+	<button class="left" on:click={prevDate}>
 		<span>&lt;</span>
 	</button>
 	<div class="center">
-		<p>{$simpleRasterDates_filtered[$selectedDateIndex]}</p>
+		<p>{$selectedDateYYYYMMDD}</p>
 	</div>
-	<button
-		class="right"
-		on:click={nextDate}
-		disabled={$selectedDateIndex == $simpleRasterDates_filtered.length - 1}
-	>
+	<button class="right" on:click={nextDate}>
 		<span>&gt;</span>
 	</button>
 </div>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { LakeExported, TimeSeriesExported, SpatialPredictionExported } from '$lib/types';
-	// import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
-	import { simpleRasterDates_filtered, selectedDateIndex } from '$lib/store';
+	import { selectedDateYYYYMMDD } from '$lib/store';
 
 	export let lake: LakeExported;
 	export let spatialPredictions: SpatialPredictionExported[];
@@ -21,9 +20,8 @@
 			(r: number) => new Date(r)
 		);
 		newFilteredDates.sort(); // mutates
-		$simpleRasterDates_filtered = newFilteredDates;
-		$selectedDateIndex = -1; // do this to register a change
-		$selectedDateIndex = 0;
+
+		throw new Error('Set timeline not yet implemented.');
 	}
 </script>
 

@@ -9,13 +9,13 @@
 		Map,
 		Marker
 	} from 'leaflet';
+	import { format } from 'date-fns';
 	import { browser } from '$app/environment';
 	import type { Lake, LakeExported, SpatialPredictionExported } from '$lib/types';
 	import 'leaflet/dist/leaflet.css';
-	import { mapCoords, selectedDateIndex } from '$lib/store';
+	import { mapCoords, selectedDateYYYYMMDD } from '$lib/store';
 	import MapPopup from './MapPopup.svelte';
 	import { PUBLIC_PNG_SERVER_PATH } from '$env/static/public';
-	import { simpleRasterDates_filtered } from '$lib/store';
 
 	export let lakes: LakeExported[];
 	export let spatialPredictions: SpatialPredictionExported[];
@@ -78,8 +78,11 @@
 			const rerenderPredictions = () => {
 				clearImageOverlays();
 				for (const spatialPrediction of spatialPredictions) {
-					let spatialPredictionYYYYMMDD = spatialPrediction.date;
+					let spatialPredictionYYYYMMDD = format(spatialPrediction.date, 'yyyy-MM-dd');
 
+					if (spatialPredictionYYYYMMDD != $selectedDateYYYYMMDD) {
+						continue;
+					}
 					// if date passes the filter
 					const image_url = `${PUBLIC_PNG_SERVER_PATH}/png_out_${spatialPrediction.session_uuid}/${spatialPrediction.display_image}`;
 
@@ -171,10 +174,7 @@
 				rerenderPredictions();
 			});
 
-			selectedDateIndex.subscribe((changedDateIndex) => {
-				if (changedDateIndex == -1) {
-					return;
-				}
+			selectedDateYYYYMMDD.subscribe((changedDateIndex) => {
 				rerenderPredictions();
 			});
 
