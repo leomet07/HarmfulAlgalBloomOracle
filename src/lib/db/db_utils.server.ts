@@ -1,16 +1,15 @@
 import { getDB } from "$lib/db/mongo.server";
 import type { SpatialPredictionExported, LakeExported } from "$lib/types";
-import { formatISO } from "date-fns";
 
 export async function getLakes() {
     const lakes = await getDB().collection("lakes").find({}).project<LakeExported>({ _id: 0 }).toArray();
     return lakes;
 }
 
-export async function getUniqueRasterDates() {
+export async function getUniqueRasterDateStrings() {
     let dates: Date[] = await getDB().collection("spatial_predictions").distinct("date"); // TODO: Mongo should already return dates
     dates.sort((a, b) => a.getTime() - b.getTime());
-    return dates;
+    return dates.map(v => v.toISOString().slice(0, 10)); // YYYY-MM-DD, removes all timezone and min/hour/sec information
 }
 
 export async function getSpatialPredictionMaps(query: any = {}) {

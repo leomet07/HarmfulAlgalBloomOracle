@@ -4,8 +4,6 @@
 
 	export let uniqueRasterDates: Date[];
 
-	console.log(uniqueRasterDates[0]);
-
 	$: selectedDateIndex = uniqueRasterDates.findIndex(
 		(v) => format(v, 'yyyy-MM-dd') === $selectedDateYYYYMMDD
 	);

@@ -3,8 +3,11 @@
 	import Map from '$lib/components/Map.svelte';
 	import Searchbar from '$lib/components/Searchbar.svelte';
 	import Timeline from '$lib/components/Timeline.svelte';
+	import { parseISO } from 'date-fns';
 
 	export let data: PageData;
+
+	let uniqueRasterDates = data.uniqueRasterDateStrings.map((v) => parseISO(v));
 </script>
 
 <hgroup>
@@ -14,6 +17,6 @@
 
 <Searchbar lakes={data.lakes} />
 
-<Timeline uniqueRasterDates={data.uniqueRasterDates} />
+<Timeline {uniqueRasterDates} />
 
 <Map lakes={data.lakes} spatialPredictions={data.spatialPredictions} />
