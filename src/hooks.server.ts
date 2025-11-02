@@ -1,9 +1,11 @@
+import type { ServerInit } from '@sveltejs/kit';
 import { connect } from '$lib/db/mongo.server';
 
-// Connect to MongoDB before starting the server
-// connect().then((): void => {
-//     console.log("MongoDB started");
-// }).catch((e: Error) => {
-//     console.log("MongoDB failed to start");
-//     console.log(e);
-// });
+export const init: ServerInit = async () => {
+    connect().then((): void => {
+        console.log("Connected to MongoDB!");
+    }).catch((e: Error) => {
+        console.log("Failed to connect to mongodb.");
+        console.log(e);
+    });
+};

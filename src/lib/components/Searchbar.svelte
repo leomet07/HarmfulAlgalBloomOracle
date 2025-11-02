@@ -3,7 +3,7 @@
 	import type { LakeExported } from '$lib/types';
 
 	export let lakes: LakeExported[];
-	let query: string;
+	let query: string = '';
 	let lakesResults: LakeExported[] = [];
 
 	function handleChange() {
@@ -11,7 +11,7 @@
 			lakesResults = [];
 			return;
 		}
-		lakesResults = lakes.filter((v) => v.name.toLowerCase().includes(query));
+		lakesResults = lakes.filter((v) => v.name.toLowerCase().includes(query.toLowerCase()));
 	}
 
 	function setView(lat: number, long: number) {
@@ -26,12 +26,13 @@
 		type="text"
 		name="search_query"
 		bind:value={query}
+		on:input={handleChange}
 		placeholder={`Search ${lakes.length} lakes...`}
 		id="search-bar"
 	/>
 </form>
 
-{#if lakesResults.length > 0}
+{#if lakesResults.length > 0 && query !== ''}
 	<div id="results">
 		{#each lakesResults.slice(0, 5) as lakeResult}
 			<button class="result" on:click={() => setView(lakeResult.latitude, lakeResult.longitude)}>
@@ -44,6 +45,12 @@
 			</p>
 		{/if}
 	</div>
+{/if}
+
+{#if lakesResults.length == 0 && query !== ''}
+	<p class="warning">
+		No lakes with name "{query}" found. Please try a different lake.
+	</p>
 {/if}
 
 <style>
