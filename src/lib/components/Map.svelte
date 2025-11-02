@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { onDestroy, onMount, mount, unmount } from 'svelte';
-	import type { CircleMarker, ImageOverlay, LatLngBounds, LatLngTuple, Map, Marker } from 'leaflet';
+	import type {
+		CircleMarker,
+		ImageOverlay,
+		LatLngBounds,
+		LatLngTuple,
+		LeafletEvent,
+		Map,
+		Marker
+	} from 'leaflet';
 	import { browser } from '$app/environment';
 	import type { Lake, LakeExported, SpatialPredictionExported } from '$lib/types';
 	import 'leaflet/dist/leaflet.css';
@@ -20,10 +28,36 @@
 	let visible_image_overlays: ImageOverlay[] = [];
 	let lakesToRasterByCurrentDate: Record<number, string> = {};
 
+	async function fetchPredictionsByBounds() {
+		let bounds = map.getBounds();
+		const response = await fetch('/boundsUpdated', {
+			method: 'POST',
+			body: JSON.stringify({ BBoxString: bounds.toBBoxString() }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		let rjson = await response.json();
+		let returnedSpatialPredictions =
+			rjson.spatialPredictions as unknown as SpatialPredictionExported[];
+		console.log(
+			'Lake Chataqua images (if Lake Chatauqua is in frame):',
+			returnedSpatialPredictions.filter((v) => v.lagoslakeid == 81353)
+		);
+		console.log('response json: ', rjson);
+		spatialPredictions = returnedSpatialPredictions;
+	}
+
+	function clearImageOverlays() {
+		for (let imageOverlay of visible_image_overlays) {
+			map.removeLayer(imageOverlay);
+		}
+		visible_image_overlays = [];
+	}
+
 	onMount(async () => {
 		if (browser) {
 			const leaflet = await import('leaflet');
-
 			const add_lake_overlay_to_map = function (
 				imageUrl: string,
 				latLngBounds: LatLngBounds,
@@ -41,14 +75,29 @@
 				});
 				visible_image_overlays.push(imageOverlay);
 			};
+			const rerenderPredictions = () => {
+				clearImageOverlays();
+				for (const spatialPrediction of spatialPredictions) {
+					let spatialPredictionYYYYMMDD = spatialPrediction.date;
 
-			const clearImageOverlays = () => {
-				for (let imageOverlay of visible_image_overlays) {
-					map.removeLayer(imageOverlay);
+					// if date passes the filter
+					const image_url = `${PUBLIC_PNG_SERVER_PATH}/png_out_${spatialPrediction.session_uuid}/${spatialPrediction.display_image}`;
+
+					const raster_url = `/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.raster_image}`;
+					lakesToRasterByCurrentDate[spatialPrediction.lagoslakeid] = raster_url;
+					const corresponding_lake = lakes.find((v) => v.id == spatialPrediction.lake); // hacky solution to find lakename
+					if (corresponding_lake) {
+						add_lake_overlay_to_map(
+							image_url,
+							leaflet.latLngBounds([
+								[spatialPrediction.corner1latitude, spatialPrediction.corner1longitude],
+								[spatialPrediction.corner2latitude, spatialPrediction.corner2longitude]
+							]),
+							corresponding_lake.name
+						);
+					}
 				}
-				visible_image_overlays = [];
 			};
-
 			// Create a popup with a Svelte component inside it and handle removal when the popup is torn down.
 			// `createFn` will be called whenever the popup is being created, and should create and return the component.
 			// Credit: https://svelte.dev/repl/62271e8fda854e828f26d75625286bc3?version=4.2.18
@@ -115,40 +164,18 @@
 				});
 			}
 
-			mapCoords.subscribe((updatedCoords) => {
+			mapCoords.subscribe(async (updatedCoords) => {
 				map.setView(updatedCoords || defaultViewCoords, 11);
+				// after all onMount initalization is done, load
+				await fetchPredictionsByBounds();
+				rerenderPredictions();
 			});
 
 			selectedDateIndex.subscribe((changedDateIndex) => {
 				if (changedDateIndex == -1) {
 					return;
 				}
-				clearImageOverlays();
-				for (const spatialPrediction of spatialPredictions) {
-					let spatialPredictionYYYYMMDD = spatialPrediction.date;
-
-					if (
-						spatialPredictionYYYYMMDD.getTime() ==
-						$simpleRasterDates_filtered[changedDateIndex].getTime()
-					) {
-						// if date passes the filter
-						const image_url = `${PUBLIC_PNG_SERVER_PATH}/png_out_${spatialPrediction.session_uuid}/${spatialPrediction.display_image}`;
-
-						const raster_url = `/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.raster_image}`;
-						lakesToRasterByCurrentDate[spatialPrediction.lagoslakeid] = raster_url;
-						const corresponding_lake = lakes.find((v) => v.id == spatialPrediction.lake); // hacky solution to find lakename
-						if (corresponding_lake) {
-							add_lake_overlay_to_map(
-								image_url,
-								leaflet.latLngBounds([
-									[spatialPrediction.corner1latitude, spatialPrediction.corner1longitude],
-									[spatialPrediction.corner2latitude, spatialPrediction.corner2longitude]
-								]),
-								corresponding_lake.name
-							);
-						}
-					}
-				}
+				rerenderPredictions();
 			});
 
 			// load nys outline (data from https://gis.ny.gov/civil-boundaries)
@@ -168,19 +195,10 @@
 				})
 				.addTo(map);
 
-			map.on('moveend', async function () {
-				let bounds = map.getBounds();
-				const response = await fetch('/boundsUpdated', {
-					method: 'POST',
-					body: JSON.stringify({ BBoxString: bounds.toBBoxString() }),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				});
-				let rjson = await response.json();
-				let spatialPredictions = rjson.spatialPredictions as unknown as SpatialPredictionExported[];
-				console.log(spatialPredictions.filter((v) => v.lagoslakeid == 81353));
-				console.log('rjson: ', rjson);
+			map.on('moveend', async function (e: LeafletEvent) {
+				console.log('Map is moved. Refetching.');
+				await fetchPredictionsByBounds();
+				rerenderPredictions();
 			});
 		}
 	});
