@@ -1,44 +1,11 @@
 <script lang="ts">
-	import type { LakeExported, TimeSeriesExported, SpatialPredictionExported } from '$lib/types';
-	import { selectedDateYYYYMMDD } from '$lib/store';
+	import type { LakeExported } from '$lib/types';
 
 	export let lake: LakeExported;
-	export let spatialPredictions: SpatialPredictionExported[];
-	export let current_raster_url: string | null;
-
-	let timeSeriesURL =
-		lake?.expand?.timeSeriesItem &&
-		`/api/files/${lake.expand.timeSeriesItem.collectionId}/${lake.expand.timeSeriesItem.id}/${lake.expand.timeSeriesItem.graph}`;
-
-	// Date.toLocaleDateString('en-CA') outputs date in YYYY-MM-DD without swithcing timezone, exactly what is needed here
-	async function setTimeline() {
-		// clear all overlays
-		let newFilteredDates: Date[] = [];
-
-		newFilteredDates = spatialPredictions.filter((v) => v.lake == lake.id).map((v) => v.date) || [];
-		newFilteredDates = [...new Set(newFilteredDates.map((r) => r.getTime()))].map(
-			(r: number) => new Date(r)
-		);
-		newFilteredDates.sort(); // mutates
-
-		throw new Error('Set timeline not yet implemented.');
-	}
 </script>
 
 <div class="lakepopup" id={'lake' + String(lake.id)}>
 	<p class="lakename">{lake.name}</p>
-	<!-- <p>In situ data recorded on {new Date('error').toLocaleDateString('en-CA')}</p> -->
-	{#if lake?.expand?.timeSeriesItem}
-		<a class="download_timeseries" href={timeSeriesURL} download="">
-			<img src={timeSeriesURL} alt={`Time Series for ${lake.name}`} />
-		</a>
-	{/if}
-	{#if current_raster_url}
-		<a class="download_prediction" href={current_raster_url} download>
-			Download Prediction GeoTiff
-		</a>
-	{/if}
-	<button on:click={setTimeline}>Restrict Timeline</button>
 </div>
 
 <style scoped>

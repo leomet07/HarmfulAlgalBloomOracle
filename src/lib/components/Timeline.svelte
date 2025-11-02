@@ -1,32 +1,42 @@
 <script lang="ts">
 	import { selectedDateYYYYMMDD } from '$lib/store';
+	import { format } from 'date-fns';
 
-	// import { selectedDateIndex } from '$lib/store';
-	// import { simpleRasterDates_filtered } from '$lib/store';
+	export let uniqueRasterDates: Date[];
+
+	console.log(uniqueRasterDates[0]);
+
+	$: selectedDateIndex = uniqueRasterDates.findIndex(
+		(v) => format(v, 'yyyy-MM-dd') === $selectedDateYYYYMMDD
+	);
 
 	function nextDate() {
-		// if ($selectedDateIndex < $simpleRasterDates_filtered.length - 1) {
-		// 	$selectedDateIndex = $selectedDateIndex + 1;
-		// }
-		// console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
+		if (selectedDateIndex < uniqueRasterDates.length - 1) {
+			$selectedDateYYYYMMDD = format(uniqueRasterDates[selectedDateIndex + 1], 'yyyy-MM-dd'); // increment stored date
+		}
+		console.log('Date changed to', $selectedDateYYYYMMDD);
 	}
 
 	function prevDate() {
-		// if ($selectedDateIndex > 0) {
-		// 	$selectedDateIndex = $selectedDateIndex - 1;
-		// }
-		// console.log('Date changed: ', $simpleRasterDates_filtered[$selectedDateIndex]);
+		if (selectedDateIndex > 0) {
+			$selectedDateYYYYMMDD = format(uniqueRasterDates[selectedDateIndex - 1], 'yyyy-MM-dd'); // increment stored date
+		}
+		console.log('Date changed to', $selectedDateYYYYMMDD);
 	}
 </script>
 
 <div class="timeline_container">
-	<button class="left" on:click={prevDate}>
+	<button class="left" on:click={prevDate} disabled={selectedDateIndex == 0}>
 		<span>&lt;</span>
 	</button>
 	<div class="center">
-		<p>{$selectedDateYYYYMMDD}</p>
+		<p>{$selectedDateYYYYMMDD} {selectedDateIndex}</p>
 	</div>
-	<button class="right" on:click={nextDate}>
+	<button
+		class="right"
+		on:click={nextDate}
+		disabled={selectedDateIndex == uniqueRasterDates.length - 1}
+	>
 		<span>&gt;</span>
 	</button>
 </div>

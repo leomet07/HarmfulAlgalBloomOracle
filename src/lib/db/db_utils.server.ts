@@ -1,11 +1,16 @@
 import { getDB } from "$lib/db/mongo.server";
 import type { SpatialPredictionExported, LakeExported } from "$lib/types";
-import type { Bounds, LatLngBounds } from "leaflet";
-
+import { formatISO } from "date-fns";
 
 export async function getLakes() {
     const lakes = await getDB().collection("lakes").find({}).project<LakeExported>({ _id: 0 }).toArray();
     return lakes;
+}
+
+export async function getUniqueRasterDates() {
+    let dates: Date[] = await getDB().collection("spatial_predictions").distinct("date"); // TODO: Mongo should already return dates
+    dates.sort((a, b) => a.getTime() - b.getTime());
+    return dates;
 }
 
 export async function getSpatialPredictionMaps(query: any = {}) {
@@ -14,21 +19,6 @@ export async function getSpatialPredictionMaps(query: any = {}) {
 }
 
 export function getSpatialPredictionMapsByCorners(BBoxString: string) {
-    // return getSpatialPredictionMaps({
-    //     "corner1longitude": {
-    //         "gt": corners.getWest()
-    //     },
-    //     "corner2longitude": {
-    //         "lt": corners.getEast()
-    //     },
-    //     "corner2latitude": {
-    //         "gt": corners.getSouth()
-    //     },
-    //     "corner1latitude": {
-    //         "lt": corners.getNorth()
-    //     },
-    // });
-    // southwest_lng,southwest_lat,northeast_lng,northeast_lat
     let lats_lngs = BBoxString.split(",").map(Number);
     let query = {
         "corner1longitude": {

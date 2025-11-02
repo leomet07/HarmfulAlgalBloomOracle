@@ -14,6 +14,6 @@
 
 <Searchbar lakes={data.lakes} />
 
-<Timeline />
+<Timeline uniqueRasterDates={data.uniqueRasterDates} />
 
 <Map lakes={data.lakes} spatialPredictions={data.spatialPredictions} />

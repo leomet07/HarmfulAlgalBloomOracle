@@ -1,12 +1,12 @@
-import { getLakes, getSpatialPredictionMaps } from "$lib/db/db_utils.server";
+import { getLakes, getUniqueRasterDates } from "$lib/db/db_utils.server";
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ params }) => {
-    const lakes = await getLakes();
+    let [lakes, uniqueRasterDates] = await Promise.all([getLakes(), getUniqueRasterDates()]);
 
     return {
         lakes: lakes,
         spatialPredictions: [],
-        simpleRasterDates: []
+        uniqueRasterDates: uniqueRasterDates
     }
 };

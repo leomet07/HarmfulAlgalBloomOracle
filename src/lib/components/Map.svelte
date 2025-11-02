@@ -26,7 +26,6 @@
 	const defaultViewCoords: LatLngTuple = [42.18778778, -79.38924043]; // LAKE CHAUTAUQUA coords
 
 	let visible_image_overlays: ImageOverlay[] = [];
-	let lakesToRasterByCurrentDate: Record<number, string> = {};
 
 	async function fetchPredictionsByBounds() {
 		let bounds = map.getBounds();
@@ -86,8 +85,6 @@
 					// if date passes the filter
 					const image_url = `${PUBLIC_PNG_SERVER_PATH}/png_out_${spatialPrediction.session_uuid}/${spatialPrediction.display_image}`;
 
-					const raster_url = `/api/files/${spatialPrediction.collectionId}/${spatialPrediction.id}/${spatialPrediction.raster_image}`;
-					lakesToRasterByCurrentDate[spatialPrediction.lagoslakeid] = raster_url;
 					const corresponding_lake = lakes.find((v) => v.id == spatialPrediction.lake); // hacky solution to find lakename
 					if (corresponding_lake) {
 						add_lake_overlay_to_map(
@@ -158,9 +155,7 @@
 					let c = mount(MapPopup, {
 						target: container,
 						props: {
-							lake: lake,
-							current_raster_url: lakesToRasterByCurrentDate[lake.lagoslakeid],
-							spatialPredictions: spatialPredictions
+							lake: lake
 						} // i don't know if these props will update dynamically, warning for the future
 					});
 					return c;
