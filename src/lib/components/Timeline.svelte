@@ -28,7 +28,7 @@
 		<span>&lt;</span>
 	</button>
 	<div class="center">
-		<p>{$selectedDateYYYYMMDD} {selectedDateIndex}</p>
+		<p>{$selectedDateYYYYMMDD}</p>
 	</div>
 	<button
 		class="right"

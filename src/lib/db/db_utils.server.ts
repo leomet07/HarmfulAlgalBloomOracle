@@ -7,7 +7,7 @@ export async function getLakes() {
 }
 
 export async function getUniqueRasterDateStrings() {
-    let dates: Date[] = await getDB().collection("spatial_predictions").distinct("date"); // TODO: Mongo should already return dates
+    let dates: Date[] = await getDB().collection("spatial_predictions").distinct("date");
     dates.sort((a, b) => a.getTime() - b.getTime());
     return dates.map(v => v.toISOString().slice(0, 10)); // YYYY-MM-DD, removes all timezone and min/hour/sec information
 }
