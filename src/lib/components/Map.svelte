@@ -75,12 +75,13 @@
 				});
 				visible_image_overlays.push(imageOverlay);
 			};
-			const rerenderPredictions = () => {
+			const rerenderPredictions = (newDateYYYYMMDD: string) => {
 				clearImageOverlays();
-				for (const spatialPrediction of spatialPredictions) {
+				for (let i = 0; i < spatialPredictions.length; i++) {
+					const spatialPrediction = spatialPredictions[i];
 					let spatialPredictionYYYYMMDD = format(spatialPrediction.date, 'yyyy-MM-dd');
 
-					if (spatialPredictionYYYYMMDD != $selectedDateYYYYMMDD) {
+					if (spatialPredictionYYYYMMDD != newDateYYYYMMDD) {
 						continue;
 					}
 					// if date passes the filter
@@ -98,6 +99,8 @@
 							]),
 							corresponding_lake.name
 						);
+					} else {
+						throw Error('Corresponding lake to this spatial prediction was not found.');
 					}
 				}
 			};
@@ -169,11 +172,11 @@
 				map.setView(updatedCoords || defaultViewCoords, 11);
 				// after all onMount initalization is done, load
 				await fetchPredictionsByBounds();
-				rerenderPredictions();
+				rerenderPredictions($selectedDateYYYYMMDD);
 			});
 
-			selectedDateYYYYMMDD.subscribe((changedDateIndex) => {
-				rerenderPredictions();
+			selectedDateYYYYMMDD.subscribe((changedDateYYYYMMDD) => {
+				rerenderPredictions(changedDateYYYYMMDD);
 			});
 
 			// load nys outline (data from https://gis.ny.gov/civil-boundaries)
@@ -196,8 +199,10 @@
 			map.on('moveend', async function (e: LeafletEvent) {
 				console.log('Map is moved. Refetching.');
 				await fetchPredictionsByBounds();
-				rerenderPredictions();
+				rerenderPredictions($selectedDateYYYYMMDD);
 			});
+			await fetchPredictionsByBounds();
+			rerenderPredictions($selectedDateYYYYMMDD);
 		}
 	});
 </script>

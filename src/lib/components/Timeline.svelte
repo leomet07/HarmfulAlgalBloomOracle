@@ -10,16 +10,18 @@
 
 	function nextDate() {
 		if (selectedDateIndex < uniqueRasterDates.length - 1) {
-			$selectedDateYYYYMMDD = format(uniqueRasterDates[selectedDateIndex + 1], 'yyyy-MM-dd'); // increment stored date
+			let newDate = format(uniqueRasterDates[selectedDateIndex + 1], 'yyyy-MM-dd');
+			console.log('Date changed to', $selectedDateYYYYMMDD);
+			$selectedDateYYYYMMDD = newDate; // increment stored date
 		}
-		console.log('Date changed to', $selectedDateYYYYMMDD);
 	}
 
 	function prevDate() {
 		if (selectedDateIndex > 0) {
-			$selectedDateYYYYMMDD = format(uniqueRasterDates[selectedDateIndex - 1], 'yyyy-MM-dd'); // increment stored date
+			let newDate = format(uniqueRasterDates[selectedDateIndex - 1], 'yyyy-MM-dd');
+			console.log('Date changed to', $selectedDateYYYYMMDD);
+			$selectedDateYYYYMMDD = newDate; // increment stored date
 		}
-		console.log('Date changed to', $selectedDateYYYYMMDD);
 	}
 </script>
 
