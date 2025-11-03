@@ -10,11 +10,14 @@
 	</p>
 
 	<p>
-		In this Climate Change Research Initiative study, our team was successful in creating a
-		remote-sensing based random forest regression (RF) model. This model utilizes both Landsat-8 & 9
-		and Sentinel-2 images to create a robust dataset of algal bloom predictions with an R2 = 0.676.
-		The RF model can be applied to entire lakes from 2013 - present day to both lakes with and
-		without previous sampling.
+		In this study supported by the NASA Climate Change Research Initative and the Center for Remote
+		Sensing and Earth System Sciences (ReSESS) at the New York City College of Technology, our team
+		successfully developed a <a href="https://github.com/leomet07/ny-satellite-chla-model"
+			>machine learning model to predict algal blooms</a
+		>. The published research paper can be found at
+		<a href="https://doi.org/10.1016/j.ecolind.2025.114316">
+			doi.org/10.1016/j.ecolind.2025.114316
+		</a>
 	</p>
 
 	<p>
@@ -39,5 +42,9 @@
 		margin-bottom: 1rem;
 		text-indent: 1rem;
 		font-size: 1.15rem;
+	}
+
+	a {
+		text-decoration: underline;
 	}
 </style>
